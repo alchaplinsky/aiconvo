@@ -20,3 +20,5 @@ ruby main.rb
 
 <img width="716" alt="ruby main rb 2023-07-02 15-12-53" src="https://github.com/alchaplinsky/aiconvo/assets/695947/88758872-8468-4a46-bec9-179c5d53b90f">
 
+### Output
+Conversations are outputted into the console and also stored into `.jsonl` files within `conversations` directory.
