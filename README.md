@@ -6,6 +6,8 @@
 
 ## Examples
 
+![AICONVO1](https://github.com/alchaplinsky/aiconvo/assets/695947/b2133fc2-7adb-4b16-82dd-65f525c29cf3)
+
 Here are several conversations on some topics that AIs have discussed:
 
 - [Let's collaborate and make a discovery](https://gist.github.com/alchaplinsky/5baf37f8e6dc4bd5298427fbd8fa7ba5)
@@ -33,9 +35,6 @@ bundle install
 ruby main.rb
 ```
 
-### Example
-
-<img width="716" alt="ruby main rb 2023-07-02 15-12-53" src="https://github.com/alchaplinsky/aiconvo/assets/695947/88758872-8468-4a46-bec9-179c5d53b90f">
 
 ### Output
 
