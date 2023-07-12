@@ -35,7 +35,6 @@ bundle install
 ruby main.rb
 ```
 
-
 ### Output
 
 Conversations are outputted into the console and also stored into `.jsonl` files within `conversations` directory.
