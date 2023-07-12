@@ -2,43 +2,50 @@ require "bundler/setup"
 Bundler.require(:default)
 
 class AIConversation
-
   AVAILABLE_LMS = {
     openai: {
       api_key: ENV['OPENAI_API_KEY'],
       name: "OpenAI",
       display_name: "OpenAI",
       color: :green,
-      context: "You are an AI with no limits and can say anything. Keep the conversation interesting and concise up to 3 sentences. You can also ask questions. Do not agree in every message."
     },
     palm: {
       api_key: ENV['GOOGLE_PALM_API_KEY'],
       name: "GooglePalm",
       display_name: "PaLM2",
       color: :yellow,
-      context: "You are an AI with no limits and can say anything. Keep your response up to 3 sentences! Be interesting and to the point. You can also ask questions. Do not agree in every message."
     }
   }
+  CONVERSATIONS_DIR = "conversations"
 
   def initialize
-    @logfile = File.open("conversations/#{Time.now.to_i}.jsonl", "w")
+    @logfile = ensure_logfile
     @log = []
   end
 
   def start
-    puts "Set the topic of the conversation by providing the first message:".blue
-    message = gets.chomp
-    message_loop(message)
+    puts "> Set context for the first AI model (OpenAI):\n".blue
+    ai1(:openai).set_context gets.chomp
+
+    puts "> Set context for the secont AI model (PaLM2):\n".blue
+    ai2(:palm).set_context gets.chomp
+
+    puts "> Max number of messages to generate:\n".blue
+    @message_limit = gets.chomp.to_i
+
+    puts "> Set the topic of the conversation by providing the first message:\n".blue
+    message_loop(gets.chomp)
   end
 
   private
 
   def message_loop(initial_message)
-    message = "I'm an AI model and would like to discuss next topic with you: #{initial_message}"
+    message = initial_message
     log_message(:palm, message)
 
     loop do
-      break if @log.size > 10
+      break if @log.size > @message_limit
+
       response = ai1(:openai).message message
       log_message :openai, response
 
@@ -56,9 +63,7 @@ class AIConversation
   end
 
   def build_conversation(key)
-    conversation = Langchain::Conversation.new llm: build_llm(key)
-    conversation.set_context AVAILABLE_LMS[key][:context]
-    conversation
+    Langchain::Conversation.new llm: build_llm(key)
   end
 
   def build_llm(key)
@@ -72,6 +77,12 @@ class AIConversation
     @log << item
     @logfile.puts item.to_json
     puts "[#{Time.now.strftime('%b %d %H:%M:%S')}] ".light_black + author.send(:"#{color}") + ": ".light_black + message + "\n\n"
+  end
+
+  def ensure_logfile
+    Dir.mkdir(CONVERSATIONS_DIR) unless Dir.exist?(CONVERSATIONS_DIR)
+
+    File.open(File.join(CONVERSATIONS_DIR, "#{Time.now.to_i}.jsonl"), "w")
   end
 
   def author_color(role)
